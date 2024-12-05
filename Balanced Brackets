@@ -1,0 +1,16 @@
+BRACKETS_MAP = {'(': ')', '{': '}', '[': ']'}
+
+def isBalanced(s):
+    stack = []
+    for bracket in s:
+        if bracket in BRACKETS_MAP:
+            stack.append(bracket)
+        elif bracket in BRACKETS_MAP.values():
+            if not stack or BRACKETS_MAP[stack.pop()] != bracket:
+                return "NO"
+    return "YES" if not stack else "NO"
+
+if __name__ == '__main__':
+    t = int(input())
+    for _ in range(t):
+        print(isBalanced(input()))
