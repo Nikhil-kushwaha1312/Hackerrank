@@ -1,0 +1,15 @@
+"""
+Node is defined as
+self.left (the left child of the node)
+self.right (the right child of the node)
+self.info (the value of the node)
+"""
+def levelOrder(root):
+    myQ = [root]
+    while(len(myQ) > 0):
+        iter = myQ.pop(0)
+        print(iter.info,end = " ")
+        if (iter.left != None):
+            myQ.append(iter.left)
+        if (iter.right != None):
+            myQ.append(iter.right)
