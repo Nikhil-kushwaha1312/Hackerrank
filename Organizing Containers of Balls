@@ -1,0 +1,16 @@
+def organizingContainers(containers):
+    container_totals = [sum(row) for row in containers]
+    ball_type_totals = [sum(containers[i][j] for i in range(len(containers))) for j in range(len(containers[0]))]
+    container_totals.sort()
+    ball_type_totals.sort()
+    if container_totals == ball_type_totals:
+        return "Possible"
+    else:
+        return "Impossible"
+
+T = int(input())
+
+for _ in range(T):
+    n = int(input())
+    containers = [list(map(int, input().split())) for _ in range(n)]
+    print(organizingContainers(containers))
