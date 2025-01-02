@@ -1,0 +1,19 @@
+def nimble_game_winner(test_cases):
+    results = []
+    for n, coins in test_cases:
+        nim_sum = 0
+        for i in range(n):
+            if coins[i] % 2 != 0:
+                nim_sum ^= i
+        results.append("Second" if nim_sum == 0 else "First")
+    return results
+
+t = int(input())
+test_cases = []
+for _ in range(t):
+    n = int(input())
+    coins = list(map(int, input().split()))
+    test_cases.append((n, coins))
+
+results = nimble_game_winner(test_cases)
+print("\n".join(results))
