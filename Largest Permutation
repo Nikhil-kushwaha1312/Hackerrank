@@ -1,0 +1,17 @@
+vector<int> largestPermutation(int k, vector<int> arr) {
+    int n=arr.size();
+    unordered_map<int, int> indexMap;
+    for(int i=0;i<n;i++){
+        indexMap[arr[i]]=i;
+    }
+    for(int i=0;i<n && k>0;i++){
+        int target_value=n-i;
+        if(arr[i]==target_value) continue;
+        int target_index=indexMap[target_value];
+        swap(arr[i],arr[target_index]);
+        indexMap[arr[target_index]]=target_index;
+        indexMap[arr[i]]=i;
+        k--;
+    }
+    return arr;
+}
