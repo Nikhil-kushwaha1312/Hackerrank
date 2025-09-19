@@ -1,0 +1,27 @@
+long winningLotteryTicket(vector<string> tickets) {
+    const int FULL_MASK=(1<<10)-1;
+    vector<long>freq(1024,0);
+    for(string &ticket:tickets){
+        int mask=0;
+        for(char c:ticket){
+            mask|=(1<<(c-'0'));
+        }
+        freq[mask]++;
+    }
+
+    long ans=0;
+    for(int i=0;i<=FULL_MASK;i++){
+        if(freq[i]==0) continue;
+        for(int j=i;j<=FULL_MASK;j++){
+            if(freq[j]==0) continue;
+            if((i|j)==FULL_MASK){
+                if(i==j){
+                    ans+=freq[i]*(freq[i]-1)/2;
+                }else{
+                    ans+=freq[i]*freq[j];
+                }
+            }
+        }
+    }
+    return ans;
+}
