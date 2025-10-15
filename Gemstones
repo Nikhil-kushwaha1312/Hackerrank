@@ -1,0 +1,17 @@
+int gemstones(vector<string> arr) {
+    set<char> gemstones_set(arr[0].begin(), arr[0].end());
+
+    for (size_t i = 1; i < arr.size(); ++i) {
+        set<char> current_rock(arr[i].begin(), arr[i].end());
+        set<char> intersection;
+
+        for (char c : gemstones_set) {
+            if (current_rock.find(c) != current_rock.end()) {
+                intersection.insert(c);
+            }
+        }
+        gemstones_set = intersection;
+    }
+
+    return gemstones_set.size();
+}
