@@ -1,0 +1,12 @@
+vector<int> stones(int n, int a, int b) {
+    set<int> results;  // to avoid duplicates when a == b
+    
+    for (int i = 0; i < n; i++) {
+        int value = i * b + (n - 1 - i) * a;
+        results.insert(value);
+    }
+    
+    // Convert set to vector
+    vector<int> ans(results.begin(), results.end());
+    return ans;
+}
