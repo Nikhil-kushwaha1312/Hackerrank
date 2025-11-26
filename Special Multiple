@@ -1,0 +1,29 @@
+string solve(int n) {
+    queue<string> q;
+    q.push("9");
+
+    // Set to track visited remainders
+    unordered_set<int> visited;
+
+    while (!q.empty()) {
+        string num = q.front();
+        q.pop();
+
+        // Compute remainder
+        int rem = 0;
+        for (char c : num) {
+            rem = (rem * 10 + (c - '0')) % n;
+        }
+
+        if (rem == 0) {
+            return num;  // Found the smallest multiple
+        }
+
+        if (visited.find(rem) == visited.end()) {
+            visited.insert(rem);
+            q.push(num + "0");
+            q.push(num + "9");
+        }
+    }
+    return "";
+}
