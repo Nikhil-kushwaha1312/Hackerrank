@@ -1,0 +1,15 @@
+int toys(vector<int> w) {
+    sort(w.begin(), w.end());
+    
+    int containers = 1;
+    int start = w[0];
+
+    for (int i = 1; i < w.size(); i++) {
+        if (w[i] > start + 4) {
+            containers++;
+            start = w[i];
+        }
+    }
+
+    return containers;
+}
