@@ -1,0 +1,140 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Piece {
+    char type;
+    int r, c;
+    bool alive;
+    Piece(char t, int rr, int cc) : type(t), r(rr), c(cc), alive(true) {}
+};
+
+// Knight moves
+int drN[] = {-2,-2,-1,-1,1,1,2,2};
+int dcN[] = {-1,1,-2,2,-2,2,-1,1};
+
+// Check inside 4x4 board
+bool valid(int r, int c) {
+    return r >= 0 && r < 4 && c >= 0 && c < 4;
+}
+
+// Generate all moves for a piece
+vector<pair<int,int>> getMoves(Piece p, const vector<vector<int>> &board) {
+    vector<pair<int,int>> moves;
+    if (!p.alive) return moves;
+
+    if (p.type == 'N') {
+        for (int i = 0; i < 8; i++) {
+            int nr = p.r + drN[i];
+            int nc = p.c + dcN[i];
+            if (valid(nr,nc)) moves.push_back({nr,nc});
+        }
+    }
+
+    if (p.type == 'R' || p.type == 'Q') {
+        int dr[] = {1,-1,0,0};
+        int dc[] = {0,0,1,-1};
+        for (int d = 0; d < 4; d++) {
+            int nr = p.r, nc = p.c;
+            while (true) {
+                nr += dr[d]; nc += dc[d];
+                if (!valid(nr,nc)) break;
+                moves.push_back({nr,nc});
+                if (board[nr][nc] != -1) break;
+            }
+        }
+    }
+
+    if (p.type == 'B' || p.type == 'Q') {
+        int dr[] = {1,1,-1,-1};
+        int dc[] = {1,-1,1,-1};
+        for (int d = 0; d < 4; d++) {
+            int nr = p.r, nc = p.c;
+            while (true) {
+                nr += dr[d]; nc += dc[d];
+                if (!valid(nr,nc)) break;
+                moves.push_back({nr,nc});
+                if (board[nr][nc] != -1) break;
+            }
+        }
+    }
+    return moves;
+}
+
+// Recursive minimax/backtracking
+bool dfs(vector<Piece> W, vector<Piece> B, int turn, int movesLeft) {
+    if (movesLeft == 0) return false;
+
+    vector<vector<int>> board(4, vector<int>(4,-1));
+
+    // Mark pieces on board
+    for (int i = 0; i < (int)W.size(); i++)
+        if (W[i].alive) board[W[i].r][W[i].c] = 0;
+    for (int i = 0; i < (int)B.size(); i++)
+        if (B[i].alive) board[B[i].r][B[i].c] = 1;
+
+    if (turn == 0) { // White
+        for (int i = 0; i < (int)W.size(); i++) if (W[i].alive) {
+            vector<pair<int,int>> moves = getMoves(W[i], board);
+            for (auto it : moves) {
+                int r = it.first, c = it.second;
+                vector<Piece> nW = W, nB = B;
+
+                // Capture black piece if present
+                for (int j = 0; j < (int)nB.size(); j++) {
+                    if (nB[j].alive && nB[j].r == r && nB[j].c == c) {
+                        if (nB[j].type == 'Q') return true; // White wins
+                        nB[j].alive = false;
+                    }
+                }
+
+                nW[i].r = r; nW[i].c = c;
+                if (dfs(nW,nB,1,movesLeft-1)) return true;
+            }
+        }
+        return false;
+    } else { // Black
+        for (int i = 0; i < (int)B.size(); i++) if (B[i].alive) {
+            vector<pair<int,int>> moves = getMoves(B[i], board);
+            for (auto it : moves) {
+                int r = it.first, c = it.second;
+                vector<Piece> nW = W, nB = B;
+
+                for (int j = 0; j < (int)nW.size(); j++) {
+                    if (nW[j].alive && nW[j].r == r && nW[j].c == c) {
+                        if (nW[j].type == 'Q') return false; // Black captured White queen
+                        nW[j].alive = false;
+                    }
+                }
+
+                nB[i].r = r; nB[i].c = c;
+                if (!dfs(nW,nB,0,movesLeft-1)) return false;
+            }
+        }
+        return true;
+    }
+}
+
+int main() {
+    int g; 
+    cin >> g;
+    while (g--) {
+        int w,b,m;
+        cin >> w >> b >> m;
+        vector<Piece> W, B;
+
+        for (int i = 0; i < w; i++) {
+            char t,c; int r;
+            cin >> t >> c >> r;
+            W.push_back(Piece(t, 4-r, c-'A'));
+        }
+        for (int i = 0; i < b; i++) {
+            char t,c; int r;
+            cin >> t >> c >> r;
+            B.push_back(Piece(t, 4-r, c-'A'));
+        }
+
+        if (dfs(W,B,0,m)) cout << "YES\n";
+        else cout << "NO\n";
+    }
+    return 0;
+}
