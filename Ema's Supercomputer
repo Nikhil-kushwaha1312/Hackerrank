@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int twoPluses(vector<string> grid) {
+    int n = grid.size();
+    int m = grid[0].size();
+    
+    vector<tuple<int,int,int>> pluses; // (row, col, arm length)
+
+    // Step 1: Generate all valid pluses
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (grid[i][j] != 'G') continue;
+
+            int k = 0;
+            while (true) {
+                bool valid = true;
+
+                for (int d = 1; d <= k; d++) {
+                    if (i+d >= n || i-d < 0 || j+d >= m || j-d < 0 ||
+                        grid[i+d][j] != 'G' || grid[i-d][j] != 'G' ||
+                        grid[i][j+d] != 'G' || grid[i][j-d] != 'G') {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (!valid) break;
+
+                pluses.push_back({i, j, k});
+                k++;
+            }
+        }
+    }
+
+    // Function to get all cells of a plus
+    auto getCells = [&](tuple<int,int,int> p) {
+        int i, j, k;
+        tie(i, j, k) = p;
+
+        set<pair<int,int>> cells;
+        cells.insert({i, j});
+
+        for (int d = 1; d <= k; d++) {
+            cells.insert({i+d, j});
+            cells.insert({i-d, j});
+            cells.insert({i, j+d});
+            cells.insert({i, j-d});
+        }
+        return cells;
+    };
+
+    int maxProduct = 0;
+
+    // Step 2: Compare all pairs
+    for (int i = 0; i < pluses.size(); i++) {
+        auto cells1 = getCells(pluses[i]);
+        int k1 = get<2>(pluses[i]);
+        int area1 = 1 + 4 * k1;
+
+        for (int j = i + 1; j < pluses.size(); j++) {
+            auto cells2 = getCells(pluses[j]);
+            int k2 = get<2>(pluses[j]);
+            int area2 = 1 + 4 * k2;
+
+            bool disjoint = true;
+            for (auto &c : cells1) {
+                if (cells2.count(c)) {
+                    disjoint = false;
+                    break;
+                }
+            }
+
+            if (disjoint) {
+                maxProduct = max(maxProduct, area1 * area2);
+            }
+        }
+    }
+
+    return maxProduct;
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    vector<string> grid(n);
+    for (int i = 0; i < n; i++) {
+        cin >> grid[i];
+    }
+
+    cout << twoPluses(grid) << endl;
+    return 0;
+}
