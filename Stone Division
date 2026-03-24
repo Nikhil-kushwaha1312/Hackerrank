@@ -1,0 +1,27 @@
+string stoneDivision(long n, vector<long> s) {
+    unordered_map<long,long> dp;
+
+    function<long(long)> grundy = [&](long x){
+        if(dp.count(x))return dp[x];
+
+        unordered_set<long> st;
+
+        for(long k:s){
+            if(x%k==0){
+                if(k%2==0){
+                    st.insert(0);
+                }else{
+                    st.insert(grundy(x/k));
+                }
+            }
+        }
+
+        long g=0;
+        while(st.count(g))g++;
+
+        return dp[x]=g;
+    };
+
+    if(grundy(n))return "First";
+    return "Second";
+}
