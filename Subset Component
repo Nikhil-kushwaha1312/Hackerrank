@@ -1,0 +1,54 @@
+int findConnectedComponents(vector<long> d) {
+
+    int n = d.size();
+    long long totalSubsets = 1LL << n;
+
+    long long answer = 0;
+
+    // Iterate over all subsets
+    for (int mask = 0; mask < (1 << n); mask++) {
+
+        vector<int> parent(64);
+        for (int i = 0; i < 64; i++) parent[i] = i;
+
+        function<int(int)> find = [&](int x) {
+            if (parent[x] != x)
+                parent[x] = find(parent[x]);
+            return parent[x];
+        };
+
+        auto unite = [&](int a, int b) {
+            a = find(a);
+            b = find(b);
+            if (a != b) parent[a] = b;
+        };
+
+        // Build graph for subset
+        for (int i = 0; i < n; i++) {
+            if (mask & (1 << i)) {
+
+                vector<int> bits;
+
+                for (int b = 0; b < 64; b++) {
+                    if ((d[i] >> b) & 1) {
+                        bits.push_back(b);
+                    }
+                }
+
+                for (int j = 1; j < (int)bits.size(); j++) {
+                    unite(bits[0], bits[j]);
+                }
+            }
+        }
+
+        // Count components
+        unordered_set<int> comp;
+        for (int i = 0; i < 64; i++) {
+            comp.insert(find(i));
+        }
+
+        answer += comp.size();
+    }
+
+    return answer;
+}
