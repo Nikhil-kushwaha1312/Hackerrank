@@ -1,0 +1,50 @@
+vector<pair<int,int>> tree;
+
+// Swap function
+void swapAtDepth(int node, int depth, int k) {
+    if (node == -1) return;
+
+    if (depth % k == 0) {
+        swap(tree[node].first, tree[node].second);
+    }
+
+    swapAtDepth(tree[node].first, depth + 1, k);
+    swapAtDepth(tree[node].second, depth + 1, k);
+}
+
+// Inorder traversal
+void inorder(int node, vector<int> &res) {
+    if (node == -1) return;
+
+    inorder(tree[node].first, res);
+    res.push_back(node);
+    inorder(tree[node].second, res);
+}
+
+vector<vector<int>> swapNodes(vector<vector<int>> indexes, vector<int> queries) {
+    
+    int n = indexes.size();
+    tree.resize(n + 1);
+
+    // Build tree (1-based indexing)
+    for (int i = 1; i <= n; i++) {
+        tree[i] = {indexes[i-1][0], indexes[i-1][1]};
+    }
+
+    vector<vector<int>> answer;
+
+    // Process each query
+    for (int k : queries) {
+        
+        // Perform swap
+        swapAtDepth(1, 1, k);
+
+        // Inorder traversal
+        vector<int> res;
+        inorder(1, res);
+
+        answer.push_back(res);
+    }
+
+    return answer;
+}
