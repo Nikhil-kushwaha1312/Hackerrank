@@ -1,0 +1,26 @@
+def evenForest(t_nodes, t_edges, t_from, t_to):
+    adj = [[] for _ in range(t_nodes + 1)]
+    for i in range(t_edges):
+        u = t_from[i]
+        v = t_to[i]
+        adj[u].append(v)
+        adj[v].append(u)
+    
+    # DFS to compute subtree sizes and count even subtrees
+    count = 0
+    visited = [False] * (t_nodes + 1)
+    
+    def dfs(node, parent):
+        nonlocal count
+        visited[node] = True
+        size = 1
+        for child in adj[node]:
+            if not visited[child] and child != parent:
+                child_size = dfs(child, node)
+                if child_size % 2 == 0:
+                    count += 1
+                size += child_size
+        return size
+    
+    dfs(1, -1)  # Start from node 1
+    return count
