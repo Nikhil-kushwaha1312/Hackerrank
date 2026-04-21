@@ -1,4 +1,8 @@
-s = s[::-1]
+from collections import Counter
+
+def reverseShuffleMerge(s):
+    # Write your code here
+    s = s[::-1]
     
     # total_count: frequency of each char in s
     total_count = Counter(s)
